@@ -1,2 +1,2 @@
 In this project, Hive was used and operations such as dependency injection, route management, sending arguments were made with GetX.
-![note](https://user-images.githubusercontent.com/52213548/228986531-12fa8a63-3da1-45dc-b5bd-2370a9397d1b.jpg)
+![Capture3](https://user-images.githubusercontent.com/52213548/228989357-135ea6b2-8887-45c2-8942-3a39b2a590ca.PNG)
