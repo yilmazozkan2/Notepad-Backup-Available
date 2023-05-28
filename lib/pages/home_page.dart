@@ -1,14 +1,20 @@
 import 'dart:io';
-
+import 'package:day_planner/routes/routes.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+//
 import 'package:day_planner/constants/color.dart';
 import 'package:day_planner/constants/padding.dart';
 import 'package:day_planner/controller/home_page_controller.dart';
 import 'package:day_planner/data/todo_database.dart';
-import 'package:day_planner/routes/routes.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
+// Widgets
+import '../widgets/home_page/backup_icon_button.dart';
+import '../widgets/home_page/build_text_field.dart';
+import '../widgets/home_page/custom_appbar.dart';
+import '../widgets/home_page/floating_action_button.dart';
+import '../widgets/home_page/restore_icon_button.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key, required}) : super(key: key);
@@ -24,7 +30,6 @@ class _HomePageState extends State<HomePage> {
   TodoDatabase _db = new TodoDatabase();
   HomePageController _homePageController = Get.find();
   var _status = 0;
-  String _backupPath = '/sdcard/Download/notlar.hive';
 
   @override
   void dispose() {
@@ -57,32 +62,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  Future<void> backupHiveBox<T>() async {
-    final _boxPath = _mybox.path;
-    if (_mybox.isOpen) {
-      print('mybox açık yedekleme yapıyor');
-      try {
-        //burada notkutusu.hive adında bi dosya veri tabanının
-        // konumundan benim istediğim konuma kopyalanıyor
-        File(_boxPath!).copy(_backupPath);
-        toastMessage('Download klasörüne yedeklendi');
-      } catch (e) {}
-    }
-  }
-
-  Future<void> restoreHiveBox<T>() async {
-    final _boxPath = _mybox.path;
-    try {
-      File(_backupPath).copy(_boxPath!);
-
-      if (File(_backupPath).existsSync()) {
-        toastMessage('Yüklendi yansıması için uygulamayı yeniden başlatın');
-      } else {
-        toastMessage('Download klasöründe yedek bulunamadı');
-      }
-    } catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -93,22 +72,16 @@ class _HomePageState extends State<HomePage> {
 
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(),
+      appBar: CustomAppBar(),
       backgroundColor: Colors.grey[100],
       resizeToAvoidBottomInset: false,
       body: buildBody(context),
-      floatingActionButton: buildFloatingActionButton(),
-    );
-  }
-
-  AppBar buildAppBar() {
-    return AppBar(
-      title: Text('Notlar'),
-      titleTextStyle:
-          Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 25),
-      centerTitle: true,
-      backgroundColor: Colors.grey.shade100,
-      elevation: 0,
+      floatingActionButton: CustomFloatingActionButton(
+        onPressed: () {
+          _homePageController.onSave();
+          setState(() {});
+        },
+      ),
     );
   }
 
@@ -116,7 +89,7 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         rowIcons(),
-        buildTextField(context),
+        BuildTextField(),
         buildView(),
       ],
     );
@@ -126,42 +99,10 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        backupIconButton(),
-        restoreIconButton(),
+        BackupIconButton(),
+        RestoreIconButton(),
         changeViewIconButton(),
       ],
-    );
-  }
-
-  Padding buildTextField(BuildContext context) {
-    return Padding(
-      padding: PaddingConstants.symetric,
-      child: TextField(
-        style: Theme.of(context).textTheme.bodyText2?.copyWith(fontSize: 17.5),
-        maxLines: null,
-        controller: _homePageController.textController,
-        decoration: InputDecoration(hintText: 'Bir şeyler yazmaya başlayın'),
-      ),
-    );
-  }
-
-  IconButton backupIconButton() {
-    return IconButton(
-      onPressed: () {
-        backupHiveBox();
-      },
-      icon: Icon(Icons.backup),
-      iconSize: 30,
-    );
-  }
-
-  IconButton restoreIconButton() {
-    return IconButton(
-      onPressed: () {
-        restoreHiveBox();
-      },
-      icon: Icon(Icons.restore),
-      iconSize: 30,
     );
   }
 
@@ -263,28 +204,5 @@ class _HomePageState extends State<HomePage> {
           .bodyText2
           ?.copyWith(color: Colors.black, fontSize: 17.5),
     );
-  }
-
-  FloatingActionButton buildFloatingActionButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        _homePageController.onSave();
-        setState(() {});
-      },
-      child: Icon(Icons.add,
-          color: ColorConstants.floatingIconBackground, size: 30),
-      elevation: 0,
-      backgroundColor: Colors.black,
-    );
-  }
-
-  Future<bool?> toastMessage(String message) {
-    return Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: ColorConstants.whiteBackground,
-        textColor: Colors.black,
-        fontSize: 16.0);
   }
 }

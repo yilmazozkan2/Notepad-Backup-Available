@@ -5,6 +5,10 @@ import 'package:day_planner/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../widgets/edit_page/back_icon_button.dart';
+import '../widgets/edit_page/build_text_form_field.dart';
+import '../widgets/edit_page/edit_page_custom_appbar.dart';
+
 class EditPage extends StatefulWidget {
   EditPage({Key? key}) : super(key: key);
 
@@ -16,9 +20,8 @@ class _EditPageState extends State<EditPage> {
   TodoDatabase db = TodoDatabase();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _args = Get.arguments;
-  bool _iconControl = true;
-  String _changedValue = '';
-
+  bool iconControl = true;
+  String changedValue = '';
   @override
   Widget build(BuildContext context) {
     return buildWillPopScope(context);
@@ -27,7 +30,7 @@ class _EditPageState extends State<EditPage> {
   WillPopScope buildWillPopScope(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        if (_iconControl) {
+        if (iconControl) {
           Get.off(() => HomePage());
         }
         return true;
@@ -39,33 +42,15 @@ class _EditPageState extends State<EditPage> {
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorConstants.whiteBackground,
-      appBar: _buildAppBar(context),
+      appBar: EditPageCustomAppBar(
+        changedValue: changedValue,
+        context: context,
+        iconControl: iconControl,
+      ),
       body: buildForm(),
     );
   }
 
-  AppBar _buildAppBar(BuildContext context) {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: ColorConstants.whiteBackground,
-      leading: buildBackIconButton(context),
-      actions: [_iconControl ? Icon(null) : buildDoneIconButton(context)],
-    );
-  }
-
-  IconButton buildBackIconButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        if (_iconControl) {
-          Get.off(() => HomePage());
-        }
-      },
-      icon: Icon(
-        Icons.arrow_back,
-        color: Colors.black,
-      ),
-    );
-  }
 
   Form buildForm() {
     return Form(
@@ -85,48 +70,15 @@ class _EditPageState extends State<EditPage> {
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
-      child: buildTextFormField(),
-    );
-  }
-
-  Container buildTextFormField() {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: Padding(
-        padding: PaddingConstants.onlyLR_TxtFormField,
-        child: TextFormField(
-          cursorHeight: 200,
-          initialValue: _args[0],
-          style: Theme.of(context).textTheme.bodyText2?.copyWith(fontSize: 17,height: 2),
-          onTap: () {
-            _iconControl = false;
-          },
-          onChanged: (value) {
-            _changedValue = value;
-            setState(() {
-              _iconControl = false;
-            });
-          },
-          maxLines: null,
-          enabled: true,
-          decoration: InputDecoration(border: InputBorder.none),
-        ),
+      child: TextFormFieldContainer(
+        iconControl: iconControl,
+        onChanged: (String value) {
+          changedValue = value;
+          setState(() {
+            iconControl = false;
+          });
+        },
       ),
-    );
-  }
-
-  IconButton buildDoneIconButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        if (_changedValue.isNotEmpty) {
-          db.loadData();
-          db.updateItem(_args[1], _changedValue);
-        }
-        _iconControl = true;
-        FocusScope.of(context).unfocus();
-      },
-      icon: Icon(Icons.done, color: Colors.black),
     );
   }
 }
