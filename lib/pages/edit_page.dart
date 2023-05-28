@@ -1,11 +1,10 @@
 import 'package:day_planner/constants/color.dart';
-import 'package:day_planner/constants/padding.dart';
 import 'package:day_planner/data/todo_database.dart';
 import 'package:day_planner/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../widgets/edit_page/back_icon_button.dart';
+// Widgets
 import '../widgets/edit_page/build_text_form_field.dart';
 import '../widgets/edit_page/edit_page_custom_appbar.dart';
 
@@ -22,6 +21,7 @@ class _EditPageState extends State<EditPage> {
   final _args = Get.arguments;
   bool iconControl = true;
   String changedValue = '';
+
   @override
   Widget build(BuildContext context) {
     return buildWillPopScope(context);

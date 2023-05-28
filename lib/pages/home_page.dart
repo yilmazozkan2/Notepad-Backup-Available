@@ -12,7 +12,7 @@ import 'package:day_planner/data/todo_database.dart';
 // Widgets
 import '../widgets/home_page/backup_icon_button.dart';
 import '../widgets/home_page/build_text_field.dart';
-import '../widgets/home_page/custom_appbar.dart';
+import '../widgets/home_page/home_page_custom_appbar.dart';
 import '../widgets/home_page/floating_action_button.dart';
 import '../widgets/home_page/restore_icon_button.dart';
 
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> {
 
   Scaffold buildScaffold(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
+      appBar: HomePageCustomAppBar(),
       backgroundColor: Colors.grey[100],
       resizeToAvoidBottomInset: false,
       body: buildBody(context),
