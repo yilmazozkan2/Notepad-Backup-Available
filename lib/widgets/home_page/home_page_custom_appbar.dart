@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class HomePageCustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return AppBar(
       title: Text('Notlar'),
       titleTextStyle:
